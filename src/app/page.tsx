@@ -9,7 +9,7 @@ export default function Home() {
       <section className="relative flex flex-col items-center justify-center overflow-hidden bg-black py-24 md:py-32">
         <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(255,126,0,0.15),transparent_70%)]" />
         <div className="relative z-10 container px-4 text-center md:px-6">
-          <h1 className="group mb-6 inline-block text-5xl font-bold tracking-tighter text-white transition-all duration-300 sm:text-6xl md:text-7xl">
+          <h1 className="font-aldrich group mb-6 inline-block text-5xl font-bold tracking-tighter text-white transition-all duration-300 sm:text-6xl md:text-7xl">
             Render - Up
           </h1>
           <p className="mx-auto mb-8 max-w-[700px] text-lg text-zinc-400 md:text-xl">
@@ -83,46 +83,56 @@ export default function Home() {
 
       {/* Examples Section */}
       <section className="bg-black px-4 py-20 md:px-6">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
-            Example Renders
-          </h2>
-          <p className="mx-auto max-w-[700px] text-zinc-400">
-            Check out these stunning examples created with Render Up. Your 3D
-            models could look this good too.
-          </p>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+        {/* Example start */}
+        <section className="relative h-[500px] w-full overflow-hidden md:h-[800px]">
+          <Image
+            src="/redFront.png"
+            alt="Background"
+            fill
+            className="-translate-y-[20px] transform object-cover md:-translate-y-[50px]"
+            style={{ objectPosition: "center" }}
+            sizes="100vw"
+            priority
+          />
+
+          <div className="relative z-10 flex h-full -translate-y-[120px] transform flex-col items-center justify-center px-4 text-center md:-translate-y-[250px]">
+            <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">
+              Example Renders
+            </h2>
+            <p className="max-w-[700px] text-gray-200 md:text-xl">
+              Check out these stunning examples created with Render Up below.
+            </p>
+            <p className="max-w-[700px] text-gray-200 md:text-xl">
+              Your 3D models could look this good too!
+            </p>
+          </div>
+        </section>
+
+        {/* Image grid */}
+        <div className="grid gap-6 sm:grid-cols-2">
+          {[
+            { src: "/glitchFront.png", alt: "redFront.png" },
+            { src: "/redTop.png", alt: "redTop.png" },
+            { src: "/greyscaleFront.png", alt: "greyscaleFront.png" },
+            { src: "/orcas.png", alt: "orcas.png" },
+          ].map((img) => (
             <div
-              key={i}
-              className="group relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/30"
+              key={img.src}
+              className="rounded-lg transition-all duration-300 hover:scale-105"
             >
-              <div className="aspect-square overflow-hidden">
-                <Image
-                  src={`/placeholder.svg?height=600&width=600&text=Example ${i}`}
-                  alt={`Example render ${i}`}
-                  width={600}
-                  height={600}
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-black/30 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <div>
-                  <h3 className="mb-1 text-lg font-bold text-white">
-                    Project {i}
-                  </h3>
-                  <p className="text-sm text-zinc-300">
-                    3D model rendered with custom lighting
-                  </p>
-                </div>
-              </div>
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={600}
+                height={400}
+                className="w-full rounded-lg"
+              />
             </div>
           ))}
         </div>
         <div className="mt-12 flex justify-center">
           <Link
-            href="/upload"
+            href="/"
             className="inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-600/20 transition-all hover:bg-orange-500"
           >
             Create Your Own Render <ArrowRight className="h-4 w-4" />
