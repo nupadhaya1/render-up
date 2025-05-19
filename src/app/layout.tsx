@@ -26,16 +26,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <main className="h-full bg-black text-white">
-        <header className="flex items-center justify-center p-4">
-          <h1
-            className={`w-full rounded-xl bg-white/30 p-4 text-center text-4xl font-bold text-orange-400 ${aldrich.className}`}
-          >
-            Render-Up
-          </h1>
-        </header>
-        <body>{children}</body>
-      </main>
+      <body>{children}</body>
     </html>
   );
 }
