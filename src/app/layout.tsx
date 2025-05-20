@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Aldrich } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Render-Up",
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${aldrich.variable}`}>
       <body>{children}</body>
+      <Analytics />
     </html>
   );
 }
