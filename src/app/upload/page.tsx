@@ -20,7 +20,7 @@ export default function UploadPage() {
   ];
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       setUploadedFile(e.target.files[0]);
     }
   };
