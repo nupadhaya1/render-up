@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center overflow-hidden bg-black py-24 md:py-32">
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(255,126,0,0.15),transparent_70%)]" />
+      <section className="relative flex flex-col items-center justify-center overflow-hidden bg-black py-12 md:py-16">
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-orange-500/15 via-transparent to-transparent" />
         <div className="relative z-10 container px-4 text-center md:px-6">
           <h1 className="font-aldrich group mb-6 inline-block text-5xl font-bold tracking-tighter text-white transition-all duration-300 sm:text-6xl md:text-7xl">
             Render - Up
@@ -23,19 +23,63 @@ export default function Home() {
             >
               Start Rendering <ArrowRight className="h-4 w-4 transition-all" />
             </Link>
-            <Link
-              href="#examples"
-              className="inline-flex items-center justify-center rounded-md border border-zinc-800 bg-black/50 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/80 hover:text-orange-400"
-            >
-              View Examples
-            </Link>
           </div>
         </div>
       </section>
 
+      {/* Examples Section */}
+      <section className="bg-black px-4 py-8 md:px-6">
+        {/* Example start */}
+        <section className="relative h-[400px] w-full overflow-hidden md:h-[600px]">
+          <Image
+            src="/redFront.png"
+            alt="Background"
+            fill
+            className="-translate-y-[20px] transform object-cover md:-translate-y-[50px]"
+            style={{ objectPosition: "center" }}
+            sizes="100vw"
+            priority
+          />
+
+          <div className="relative z-10 flex h-full -translate-y-[80px] transform flex-col items-center justify-center px-4 text-center md:-translate-y-[150px]">
+            <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">
+              Example Renders
+            </h2>
+            <p className="max-w-[700px] text-gray-200 md:text-xl">
+              Check out these stunning examples created with Render Up below.
+            </p>
+            <p className="max-w-[700px] text-gray-200 md:text-xl">
+              Your 3D models could look this good too!
+            </p>
+          </div>
+        </section>
+
+        {/* Image grid */}
+        <div className="grid gap-6 sm:grid-cols-2">
+          {[
+            { src: "/glitchFront.png", alt: "redFront.png" },
+            { src: "/redTop.png", alt: "redTop.png" },
+            { src: "/greyscaleFront.png", alt: "greyscaleFront.png" },
+            { src: "/orcas.png", alt: "orcas.png" },
+          ].map((img) => (
+            <div
+              key={img.src}
+              className="rounded-lg transition-all duration-300 hover:scale-105"
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={600}
+                height={400}
+                className="w-full rounded-lg"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
       {/* Features Section */}
-      <section className="items-center justify-center bg-zinc-900 px-4 py-16 md:px-6">
-        <div className="mb-12 flex items-center justify-center gap-2">
+      <section className="items-center justify-center bg-gradient-to-b from-black via-zinc-900 to-zinc-800 px-4 py-8 md:px-6">
+        <div className="mb-8 flex items-center justify-center gap-2">
           <Zap className="h-6 w-6 text-orange-500" />
           <h2 className="text-2xl font-bold text-white md:text-3xl">
             How It Works
@@ -79,58 +123,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </section>
-
-      {/* Examples Section */}
-      <section className="bg-black px-4 py-20 md:px-6">
-        {/* Example start */}
-        <section className="relative h-[500px] w-full overflow-hidden md:h-[800px]">
-          <Image
-            src="/redFront.png"
-            alt="Background"
-            fill
-            className="-translate-y-[20px] transform object-cover md:-translate-y-[50px]"
-            style={{ objectPosition: "center" }}
-            sizes="100vw"
-            priority
-          />
-
-          <div className="relative z-10 flex h-full -translate-y-[120px] transform flex-col items-center justify-center px-4 text-center md:-translate-y-[250px]">
-            <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">
-              Example Renders
-            </h2>
-            <p className="max-w-[700px] text-gray-200 md:text-xl">
-              Check out these stunning examples created with Render Up below.
-            </p>
-            <p className="max-w-[700px] text-gray-200 md:text-xl">
-              Your 3D models could look this good too!
-            </p>
-          </div>
-        </section>
-
-        {/* Image grid */}
-        <div className="grid gap-6 sm:grid-cols-2">
-          {[
-            { src: "/glitchFront.png", alt: "redFront.png" },
-            { src: "/redTop.png", alt: "redTop.png" },
-            { src: "/greyscaleFront.png", alt: "greyscaleFront.png" },
-            { src: "/orcas.png", alt: "orcas.png" },
-          ].map((img) => (
-            <div
-              key={img.src}
-              className="rounded-lg transition-all duration-300 hover:scale-105"
-            >
-              <Image
-                src={img.src}
-                alt={img.alt}
-                width={600}
-                height={400}
-                className="w-full rounded-lg"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="mt-12 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-600/20 transition-all hover:bg-orange-500"
