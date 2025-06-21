@@ -5,6 +5,16 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/home",
+        permanent: false, // false = 302; set to true if you want a 301
+      },
+    ];
+  },
+};
 
 export default config;
