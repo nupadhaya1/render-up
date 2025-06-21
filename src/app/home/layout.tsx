@@ -39,33 +39,28 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
-      <html lang="en" className={`${geist.variable} ${aldrich.variable}`}>
-        <body className="bg-black text-white">
-          <header className="flex h-16 items-center justify-end gap-3 bg-gradient-to-b from-orange-500/20 to-orange-500/15 px-3 py-4">
-            <SignedOut>
-              <SignInButton>
-                <Button className="flex items-center gap-2 bg-white py-2 text-black transition-all duration-200 hover:scale-105 hover:bg-white active:scale-95">
-                  <UserCircle2 className="h-4 w-4" />
-                  Sign in
-                </Button>
-              </SignInButton>
-              <SignUpButton forceRedirectUrl={"sign-up"}>
-                <Button className="flex items-center gap-2 bg-orange-500 py-2 transition-all duration-200 hover:scale-105 hover:bg-orange-500 active:scale-95">
-                  <UserCircle2 className="h-4 w-4" />
-                  Sign up
-                </Button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <div>
-                <UserButton />
-              </div>
-            </SignedIn>
-          </header>
-          {children}
-        </body>
-        <Analytics />
-      </html>
+      <header className="flex h-16 items-center justify-end gap-3 bg-gradient-to-b from-orange-500/20 to-orange-500/15 px-3 py-4">
+        <SignedOut>
+          <SignInButton>
+            <Button className="flex items-center gap-2 bg-white py-2 text-black transition-all duration-200 hover:scale-105 hover:bg-white active:scale-95">
+              <UserCircle2 className="h-4 w-4" />
+              Sign in
+            </Button>
+          </SignInButton>
+          <SignUpButton forceRedirectUrl={"sign-up"}>
+            <Button className="flex items-center gap-2 bg-orange-500 py-2 transition-all duration-200 hover:scale-105 hover:bg-orange-500 active:scale-95">
+              <UserCircle2 className="h-4 w-4" />
+              Sign up
+            </Button>
+          </SignUpButton>
+        </SignedOut>
+        <SignedIn>
+          <div>
+            <UserButton />
+          </div>
+        </SignedIn>
+      </header>
+      {children}
     </ClerkProvider>
   );
 }
