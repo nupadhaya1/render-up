@@ -18,7 +18,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/upload"
+              href="/user/upload"
               className="group inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-orange-600 to-orange-500 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-500/25 transition-all hover:gap-3 hover:shadow-orange-500/40"
             >
               Start Rendering <ArrowRight className="h-4 w-4 transition-all" />
