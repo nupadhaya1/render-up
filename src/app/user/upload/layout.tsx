@@ -39,9 +39,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider appearance={{ baseTheme: dark }}>
-      <header className="bg-themeBG flex h-16 items-center justify-between px-3 py-4">
-        <div className="flex flex-1 justify-center">
-          <h1 className="text-accent-500 text-2xl font-bold">Render-Up</h1>
+      <header className="m-2 flex h-16 items-center justify-between px-3 py-4">
+        <div className="bg-1background flex flex-1 justify-center">
+          <a href="/" className="text-accent-500 text-4xl font-bold">
+            Render-Up
+          </a>
         </div>
         <div className="flex items-center gap-3">
           <SignedOut>

@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={`${geist.variable} ${aldrich.variable}`}>
-        <body className="bg-black text-white">{children}</body>
+        <body className="text-1text bg-black">{children}</body>
         <Analytics />
       </html>
     </ClerkProvider>
