@@ -29,7 +29,7 @@ export default function OptionsPage() {
   );
 
   const totalPrice =
-    (basePriceObj?.price || 0) + (resolutionObj?.additionalCost || 0);
+    (basePriceObj?.price ?? 0) + (resolutionObj?.additionalCost ?? 0);
 
   return (
     <main className="bg-background-950 flex">
