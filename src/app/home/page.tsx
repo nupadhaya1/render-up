@@ -7,7 +7,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="relative flex flex-col items-center justify-center overflow-hidden bg-black py-12 md:py-16">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-orange-500/15 via-transparent to-transparent" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-red-500/15 via-transparent to-transparent" />
         <div className="relative z-10 container px-4 text-center md:px-6">
           <h1 className="font-aldrich group mb-6 inline-block text-5xl font-bold tracking-tighter text-white transition-all duration-300 sm:text-6xl md:text-7xl">
             Render - Up
@@ -19,7 +19,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/user/upload"
-              className="group inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-orange-600 to-orange-500 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-500/25 transition-all hover:gap-3 hover:shadow-orange-500/40"
+              className="group bg-secondary-500 hover:bg-accent-500 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-medium text-white transition-all hover:gap-3"
             >
               Start Rendering <ArrowRight className="h-4 w-4 transition-all" />
             </Link>
@@ -80,14 +80,14 @@ export default function Home() {
       {/* Features Section */}
       <section className="items-center justify-center bg-gradient-to-b from-black via-zinc-900 to-zinc-800 px-4 py-8 md:px-6">
         <div className="mb-8 flex items-center justify-center gap-2">
-          <Zap className="h-6 w-6 text-orange-500" />
+          <Zap className="text-primary-500 h-6 w-6" />
           <h2 className="text-2xl font-bold text-white md:text-3xl">
             How It Works
           </h2>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur-sm transition-all hover:border-orange-900/50 hover:bg-zinc-900/80">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/10 text-orange-500">
+            <div className="bg-secondary-500/10 text-primary-500 mb-4 flex h-12 w-12 items-center justify-center rounded-full">
               <span className="text-xl font-bold">1</span>
             </div>
             <h3 className="mb-2 text-xl font-bold text-white">
@@ -99,7 +99,7 @@ export default function Home() {
             </p>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur-sm transition-all hover:border-orange-900/50 hover:bg-zinc-900/80">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/10 text-orange-500">
+            <div className="bg-secondary-500/10 text-primary-500 mb-4 flex h-12 w-12 items-center justify-center rounded-full">
               <span className="text-xl font-bold">2</span>
             </div>
             <h3 className="mb-2 text-xl font-bold text-white">
@@ -111,7 +111,7 @@ export default function Home() {
             </p>
           </div>
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur-sm transition-all hover:border-orange-900/50 hover:bg-zinc-900/80">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/10 text-orange-500">
+            <div className="bg-secondary-500/10 text-primary-500 mb-4 flex h-12 w-12 items-center justify-center rounded-full">
               <span className="text-xl font-bold">3</span>
             </div>
             <h3 className="mb-2 text-xl font-bold text-white">
@@ -126,7 +126,7 @@ export default function Home() {
         <div className="mt-8 flex justify-center">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-6 py-3 text-sm font-medium text-white shadow-lg shadow-orange-600/20 transition-all hover:bg-orange-500"
+            className="bg-secondary-500 shadow-accent-600/20 hover:bg-accent-500 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-medium text-white shadow-lg transition-all"
           >
             Create Your Own Render <ArrowRight className="h-4 w-4" />
           </Link>
