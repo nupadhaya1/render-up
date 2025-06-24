@@ -22,7 +22,7 @@ export default function UploadPage() {
   const [selectedBg, setSelectedBg] = useState(backgroundImages[0]);
 
   function handleFileUpload(event: ChangeEvent<HTMLInputElement>): void {
-    const file = event.target.files?.[0] || null;
+    const file = event.target.files?.[0] ?? null;
     setSelectedFile(file);
   }
   return (
