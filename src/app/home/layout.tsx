@@ -1,9 +1,6 @@
 import "~/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Geist } from "next/font/google";
-import { Aldrich } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import {
   ClerkProvider,
   SignInButton,
@@ -12,10 +9,9 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 import { Button } from "~/components/ui/button";
-import { UserCircle2 } from "lucide-react";
+import { UserCircle2, ShoppingCart } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Render-Up",
@@ -23,42 +19,49 @@ export const metadata: Metadata = {
   // icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
-const aldrich = Aldrich({
-  subsets: ["latin"],
-  variable: "--font-aldrich",
-  weight: "400",
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
-      <header className="flex h-16 items-center justify-end gap-3 bg-gradient-to-b from-red-500/20 to-red-500/15 px-3 py-4">
-        <SignedOut>
-          <SignInButton>
-            <Button className="flex items-center gap-2 bg-white py-2 text-black transition-all duration-200 hover:scale-105 hover:bg-white active:scale-95">
-              <UserCircle2 className="h-4 w-4" />
-              Sign in
-            </Button>
-          </SignInButton>
-          <SignUpButton forceRedirectUrl={"sign-up"}>
-            <Button className="flex items-center gap-2 bg-orange-500 py-2 transition-all duration-200 hover:scale-105 hover:bg-orange-500 active:scale-95">
-              <UserCircle2 className="h-4 w-4" />
-              Sign up
-            </Button>
-          </SignUpButton>
-        </SignedOut>
-        <SignedIn>
-          <div>
-            <UserButton />
-          </div>
-        </SignedIn>
+    <ClerkProvider>
+      <header className="bg-background-900 relative m-2 flex h-16 items-center justify-between rounded-md px-3 py-4">
+        {/* Left: Auth Buttons */}
+        <div className="z-10 flex gap-2">
+          <SignedOut>
+            <SignInButton>
+              <Button className="flex items-center gap-2 bg-white py-2 text-black transition-all duration-200 hover:scale-105 hover:bg-white active:scale-95">
+                <UserCircle2 className="h-4 w-4" />
+                Sign in
+              </Button>
+            </SignInButton>
+            <SignUpButton forceRedirectUrl={"sign-up"}>
+              <Button className="bg-accent-500 flex items-center gap-2 py-2 transition-all duration-200 hover:scale-105 hover:bg-orange-500 active:scale-95">
+                <UserCircle2 className="h-4 w-4" />
+                Sign up
+              </Button>
+            </SignUpButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "w-12 h-12", // Make the avatar bigger
+                  userButtonPopoverCard: "text-base", // Optionally increase popover text size
+                },
+              }}
+            />
+          </SignedIn>
+        </div>
+
+        {/* Center: Title - Absolutely positioned */}
+        <h1 className="font-notable text-primary-500 absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl tracking-wider">
+          RENDER UP
+        </h1>
+
+        {/* Right: Cart */}
+        <Button className="z-10 flex items-center transition-all duration-200 hover:scale-105 active:scale-95">
+          <ShoppingCart className="h-8 w-8" />
+        </Button>
       </header>
       {children}
     </ClerkProvider>

@@ -33,6 +33,13 @@ const config = {
           "system-ui",
           "sans-serif",
         ],
+        // Notable font for titles
+        notable: [
+          "var(--font-notable)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       colors: {
         border: "hsl(var(--border))",
