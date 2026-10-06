@@ -13,6 +13,8 @@ export type StarSettings = {
   size: number;
   /** how far the field drifts with the pointer, 0 = fixed */
   movement: number;
+  /** how much weight the field has: it keeps gliding after the pointer stops, 0 = follows the pointer closely */
+  momentum: number;
   /** twinkle speed and depth, 0 = steady */
   twinkle: number;
   /** how strongly stars light up under the pointer, 0 = off */
@@ -32,6 +34,7 @@ export const STAR_DEFAULTS: StarSettings = {
   density: 3600,
   size: 1,
   movement: 1.6,
+  momentum: 1,
   twinkle: 1,
   hover: 1,
   reach: 150,
@@ -50,6 +53,7 @@ export const STAR_LIMITS: Record<
   density: { min: 200, max: 6000, step: 100, label: "Density" },
   size: { min: 0.4, max: 2.5, step: 0.05, label: "Size" },
   movement: { min: 0, max: 4, step: 0.1, label: "Movement" },
+  momentum: { min: 0, max: 3, step: 0.1, label: "Momentum" },
   twinkle: { min: 0, max: 3, step: 0.1, label: "Twinkle" },
   hover: { min: 0, max: 2.5, step: 0.05, label: "Hover glow" },
   reach: { min: 40, max: 400, step: 10, label: "Hover reach" },

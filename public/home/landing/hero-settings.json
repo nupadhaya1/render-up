@@ -4,6 +4,7 @@
     "density": 3600,
     "size": 1,
     "movement": 1.6,
+    "momentum": 1,
     "twinkle": 1,
     "hover": 1,
     "reach": 150,

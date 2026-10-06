@@ -1,7 +1,7 @@
 "use client";
 
 // The coming-soon hero. One screen, three layers:
-//   1. a live three.js star field (parallax, twinkle, stars light up under the pointer),
+//   1. a live three.js star field (parallax with momentum, twinkle, stars light up under the pointer),
 //   2. the robot: one static Cycles render on a transparent film (hero.webp, hero-4k.webp). It does not move.
 //      The film look (glow, halation) is baked into that render and is nowhere else on the page.
 //   3. the copy.
@@ -14,6 +14,12 @@ import type { HeroSettings, StarSettings } from "./settings";
 import { Starfield } from "./starfield";
 
 export const ASSETS = "/home/landing";
+
+// The star field has weight. A damped spring pulls it towards the pointer, so it eases into a move and keeps
+// gliding after the pointer stops. Just under critical damping: it settles softly, with no visible bounce.
+const DAMPING = 0.75;
+/** Seconds the field trails behind the pointer, which is also roughly how long it coasts once the pointer stops. */
+const glideSeconds = (momentum: number) => 0.14 + 0.2 * momentum;
 
 export function Hero({ settings }: { settings: HeroSettings }) {
   const stage = useRef<HTMLDivElement>(null);
@@ -52,10 +58,15 @@ export function Hero({ settings }: { settings: HeroSettings }) {
     document.documentElement.addEventListener("pointerleave", onLeave);
 
     const drift = { x: 0, y: 0 };
+    const speed = { x: 0, y: 0 };
     let applied: StarSettings | null = null;
     let frame = 0;
+    let last = performance.now();
     const tick = (ms: number) => {
       frame = requestAnimationFrame(tick);
+      // real seconds, so the glide lasts as long on a 120 Hz screen as on a 60 Hz one (capped after a hidden tab)
+      const dt = Math.min(Math.max(ms - last, 0) / 1000, 0.05);
+      last = ms;
       const now = live.current.stars;
       if (applied !== now) {
         applied = now;
@@ -63,8 +74,11 @@ export function Hero({ settings }: { settings: HeroSettings }) {
       }
       const tx = pointer.inside && !still ? pointer.x * 2 - 1 : 0;
       const ty = pointer.inside && !still ? pointer.y * 2 - 1 : 0;
-      drift.x += (tx - drift.x) * 0.06;
-      drift.y += (ty - drift.y) * 0.06;
+      const pull = (2 * DAMPING) / glideSeconds(now.momentum); // the spring's natural frequency, rad/s
+      speed.x += ((tx - drift.x) * pull - speed.x * 2 * DAMPING) * pull * dt;
+      speed.y += ((ty - drift.y) * pull - speed.y * 2 * DAMPING) * pull * dt;
+      drift.x += speed.x * dt;
+      drift.y += speed.y * dt;
       stars.parallax.x = drift.x;
       stars.parallax.y = drift.y;
       stars.render(ms / 1000);
