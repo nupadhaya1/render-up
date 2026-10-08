@@ -5,7 +5,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-import { sanitize } from "../_components/settings";
+import { CAN_TUNE, sanitize } from "../_components/settings";
 
 const FILE = path.join(
   process.cwd(),
@@ -16,7 +16,7 @@ const FILE = path.join(
 );
 
 export async function POST(request: Request) {
-  if (process.env.NODE_ENV === "production") {
+  if (!CAN_TUNE) {
     return Response.json(
       { error: "Saving is only available on the dev server." },
       { status: 403 },

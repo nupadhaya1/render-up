@@ -9,11 +9,12 @@ import { useState } from "react";
 import { Check, RotateCcw, Save, Settings2, X } from "lucide-react";
 
 import {
-  HERO_DEFAULTS,
-  type HeroSettings,
+  formatSetting,
   sameSettings,
+  STAR_DEFAULTS,
+  STAR_FIELDS,
   STAR_KEYS,
-  STAR_LIMITS,
+  type StarKey,
   type StarSettings,
 } from "./settings";
 
@@ -23,10 +24,10 @@ export function AdminPanel({
   onChange,
   onSave,
 }: {
-  settings: HeroSettings;
+  settings: StarSettings;
   /** what is currently saved for everyone (the built-in defaults until something has been saved) */
-  saved: HeroSettings;
-  onChange: (settings: HeroSettings) => void;
+  saved: StarSettings;
+  onChange: (settings: StarSettings) => void;
   onSave: () => Promise<boolean>;
 }) {
   const [open, setOpen] = useState(false);
@@ -34,12 +35,12 @@ export function AdminPanel({
     "idle",
   );
   const [copied, setCopied] = useState(false);
-  const setStar = (key: keyof StarSettings, value: number) => {
+  const setStar = (key: StarKey, value: number) => {
     setState("idle");
-    onChange({ ...settings, stars: { ...settings.stars, [key]: value } });
+    onChange({ ...settings, [key]: value });
   };
   const unsaved = !sameSettings(settings, saved);
-  const atDefault = sameSettings(settings, HERO_DEFAULTS);
+  const atDefault = sameSettings(settings, STAR_DEFAULTS);
 
   return (
     <div className="lp-admin">
@@ -72,12 +73,12 @@ export function AdminPanel({
 
           <p className="lp-admin-group">Stars</p>
           {STAR_KEYS.map((key) => {
-            const limit = STAR_LIMITS[key];
-            const value = settings.stars[key];
+            const limit = STAR_FIELDS[key];
+            const value = settings[key];
             return (
               <label key={key} className="lp-admin-row">
                 <span>{limit.label}</span>
-                <output>{limit.step >= 1 ? value : value.toFixed(2)}</output>
+                <output>{formatSetting(key, value)}</output>
                 <input
                   type="range"
                   min={limit.min}
@@ -115,7 +116,7 @@ export function AdminPanel({
               disabled={atDefault}
               onClick={() => {
                 setState("idle");
-                onChange(HERO_DEFAULTS);
+                onChange(STAR_DEFAULTS);
               }}
             >
               <RotateCcw className="size-3.5" /> Reset to default

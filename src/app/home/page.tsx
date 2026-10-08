@@ -1,5 +1,4 @@
 // /home: the coming-soon page. A glass nav, a real render of the sample robot floating in space, one line of copy.
-// The page and header it replaced are kept, unrouted, in ./_previous.
 
 import type { Metadata } from "next";
 

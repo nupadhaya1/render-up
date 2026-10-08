@@ -6,10 +6,12 @@
 
 import * as THREE from "three";
 
-import { STAR_DEFAULTS, STAR_LIMITS, type StarSettings } from "./settings";
+import { STAR_DEFAULTS, STAR_FIELDS, type StarSettings } from "./settings";
 
-const MAX_STARS = STAR_LIMITS.density.max;
-const MAX_BLURRED = STAR_LIMITS.blurred.max;
+const MAX_STARS = STAR_FIELDS.density.max;
+const MAX_BLURRED = STAR_FIELDS.blurred.max;
+/** Seconds for a woken star to fade to about a third of its glow, whatever the frame rate. */
+const ENERGY_SETTLE_SECONDS = 0.36;
 
 const VERT = /* glsl */ `
   attribute float aSize;
@@ -21,7 +23,6 @@ const VERT = /* glsl */ `
   uniform float uTime;
   uniform float uPixelRatio;
   uniform vec2 uParallax;
-  uniform float uScroll;
   uniform float uBrightness;
   uniform float uSize;
   uniform float uTwinkle;
@@ -29,7 +30,7 @@ const VERT = /* glsl */ `
   varying vec3 vColor;
   varying float vGlow;
   void main() {
-    vec2 p = position.xy + uParallax * aDepth + vec2(0.0, uScroll * aDepth);
+    vec2 p = position.xy + uParallax * aDepth;
     gl_Position = vec4(p, 0.0, 1.0);
     float depth = min(0.28 * uTwinkle, 0.9);
     float twinkle = 1.0 - depth + depth * sin(uTime * aSpeed * max(uTwinkle, 0.001) + aPhase);
@@ -90,8 +91,7 @@ export class Starfield {
   /** Pointer in stage pixels, or null when it is away. */
   pointer: { x: number; y: number } | null = null;
   /** Smoothed pointer offset from the centre, -1..1 on each axis. */
-  parallax = { x: 0, y: 0 };
-  scroll = 0;
+  parallax: { x: number; y: number } = { x: 0, y: 0 };
 
   constructor(canvas: HTMLCanvasElement) {
     // An opaque black canvas that the page blends in with mix-blend-mode: screen (.lp-stars):
@@ -124,7 +124,7 @@ export class Starfield {
     for (let i = 0; i < count; i++) {
       // a little beyond the frame so parallax never shows an edge
       x[i] = (r() * 2 - 1) * 1.2;
-      y[i] = (r() * 2 - 1) * 1.45; // taller: scrolling slides the field up as well
+      y[i] = (r() * 2 - 1) * 1.2;
       position[i * 3] = x[i]!;
       position[i * 3 + 1] = y[i]!;
       const d = r();
@@ -173,7 +173,6 @@ export class Starfield {
         uTime: { value: 0 },
         uPixelRatio: { value: this.renderer.getPixelRatio() },
         uParallax: { value: new THREE.Vector2() },
-        uScroll: { value: 0 },
         uSoft: { value: soft ? 1 : 0 },
         uBrightness: { value: 1 },
         uSize: { value: 1 },
@@ -211,38 +210,45 @@ export class Starfield {
     this.renderer.setSize(w, h, false);
   }
 
-  /** time in seconds */
-  render(time: number) {
+  /** `time` is the clock in seconds; `dt` the seconds since the last frame, so fading is the same at any refresh rate. */
+  render(time: number, dt: number) {
     const { w, h } = this.size;
     const drift = 0.035 * this.settings.movement;
     const px = this.parallax.x * -drift;
     const py = this.parallax.y * drift;
-    const scroll = this.scroll * 0.22;
     const pointer = this.settings.hover > 0 ? this.pointer : null;
+    const settle = Math.exp(-dt / ENERGY_SETTLE_SECONDS);
     for (const layer of this.layers) {
       const { energy, x, y, depth, count } = layer;
       const reach = this.settings.reach * (layer.soft ? 1.5 : 1);
+      let changed = false;
       for (let i = 0; i < count; i++) {
-        let e = energy[i]! * 0.955; // settle back
+        const before = energy[i]!;
+        let e = before * settle;
         if (pointer) {
           const sx = (x[i]! + px * depth[i]! + 1) * 0.5 * w;
-          const sy = (1 - (y[i]! + (py + scroll) * depth[i]! + 1) * 0.5) * h;
+          const sy = (1 - (y[i]! + py * depth[i]! + 1) * 0.5) * h;
           const dist = Math.hypot(sx - pointer.x, sy - pointer.y);
           if (dist < reach) {
             const near = 1 - dist / reach;
             e = Math.max(e, near * near);
           }
         }
-        energy[i] = e < 0.002 ? 0 : e;
+        e = e < 0.002 ? 0 : e;
+        if (e !== before) {
+          energy[i] = e;
+          changed = true;
+        }
       }
-      const attr = layer.points.geometry.getAttribute(
-        "aEnergy",
-      ) as THREE.BufferAttribute;
-      attr.needsUpdate = true;
+      // a still field costs no buffer upload, which keeps high refresh rates cheap
+      if (changed) {
+        (
+          layer.points.geometry.getAttribute("aEnergy") as THREE.BufferAttribute
+        ).needsUpdate = true;
+      }
       const u = layer.points.material.uniforms;
       u.uTime!.value = time;
       (u.uParallax!.value as THREE.Vector2).set(px, py);
-      u.uScroll!.value = scroll;
     }
     this.renderer.render(this.scene, this.camera);
   }

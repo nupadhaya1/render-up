@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   // icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-// The header (sign in, sign up, cart) is parked in ./_previous/site-header.tsx while /home is the coming-soon page.
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

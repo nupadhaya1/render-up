@@ -6,22 +6,22 @@
 //      The film look (glow, halation) is baked into that render and is nowhere else on the page.
 //   3. the copy.
 // The render comes from .scratch/materials-research/lookdev (render_sequence.py, then sync_landing_frames.py).
-// The exploded view on scroll is parked: its frames can still be rendered there, the page does not use them.
 
 import { useEffect, useRef } from "react";
 
-import type { HeroSettings, StarSettings } from "./settings";
+import { trackPointer } from "./pointer";
+import type { StarSettings } from "./settings";
+import { Spring, type Vec2 } from "./spring";
 import { Starfield } from "./starfield";
 
 export const ASSETS = "/home/landing";
 
-// The star field has weight. A damped spring pulls it towards the pointer, so it eases into a move and keeps
-// gliding after the pointer stops. Just under critical damping: it settles softly, with no visible bounce.
-const DAMPING = 0.75;
 /** Seconds the field trails behind the pointer, which is also roughly how long it coasts once the pointer stops. */
 const glideSeconds = (momentum: number) => 0.14 + 0.2 * momentum;
+/** A hidden tab hands back one huge frame time; cap it so nothing jumps when the tab returns. */
+const MAX_FRAME_SECONDS = 0.05;
 
-export function Hero({ settings }: { settings: HeroSettings }) {
+export function Hero({ settings }: { settings: StarSettings }) {
   const stage = useRef<HTMLDivElement>(null);
   const starsCanvas = useRef<HTMLCanvasElement>(null);
   const live = useRef(settings);
@@ -33,63 +33,41 @@ export function Hero({ settings }: { settings: HeroSettings }) {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const stars = new Starfield(starsCanvas.current);
 
-    const resize = () =>
-      stars.resize(stageEl.clientWidth, stageEl.clientHeight);
-    const observer = new ResizeObserver(resize);
+    const observer = new ResizeObserver(() =>
+      stars.resize(stageEl.clientWidth, stageEl.clientHeight),
+    );
     observer.observe(stageEl);
-    resize();
+    stars.resize(stageEl.clientWidth, stageEl.clientHeight);
 
-    // the pointer only moves and wakes the stars
-    const pointer = { x: 0.5, y: 0.5, inside: false };
-    const onMove = (e: PointerEvent) => {
-      const box = stageEl.getBoundingClientRect();
-      const x = e.clientX - box.left;
-      const y = e.clientY - box.top;
-      pointer.inside = x >= 0 && y >= 0 && x <= box.width && y <= box.height;
-      pointer.x = x / box.width;
-      pointer.y = y / box.height;
-      stars.pointer = pointer.inside ? { x, y } : null;
-    };
-    const onLeave = () => {
-      pointer.inside = false;
-      stars.pointer = null;
-    };
-    window.addEventListener("pointermove", onMove);
-    document.documentElement.addEventListener("pointerleave", onLeave);
-
-    const drift = { x: 0, y: 0 };
-    const speed = { x: 0, y: 0 };
+    const [pointer, stopPointer] = trackPointer(stageEl);
+    const spring = new Spring();
+    const rest: Vec2 = { x: 0, y: 0 };
     let applied: StarSettings | null = null;
-    let frame = 0;
     let last = performance.now();
-    const tick = (ms: number) => {
+    // requestAnimationFrame fires once per display refresh, so a 120 Hz screen gets 120 frames a second
+    let frame = requestAnimationFrame(function tick(ms) {
       frame = requestAnimationFrame(tick);
-      // real seconds, so the glide lasts as long on a 120 Hz screen as on a 60 Hz one (capped after a hidden tab)
-      const dt = Math.min(Math.max(ms - last, 0) / 1000, 0.05);
+      const dt = Math.min(Math.max(ms - last, 0) / 1000, MAX_FRAME_SECONDS);
       last = ms;
-      const now = live.current.stars;
+      const now = live.current;
       if (applied !== now) {
         applied = now;
         stars.apply(now);
       }
-      const tx = pointer.inside && !still ? pointer.x * 2 - 1 : 0;
-      const ty = pointer.inside && !still ? pointer.y * 2 - 1 : 0;
-      const pull = (2 * DAMPING) / glideSeconds(now.momentum); // the spring's natural frequency, rad/s
-      speed.x += ((tx - drift.x) * pull - speed.x * 2 * DAMPING) * pull * dt;
-      speed.y += ((ty - drift.y) * pull - speed.y * 2 * DAMPING) * pull * dt;
-      drift.x += speed.x * dt;
-      drift.y += speed.y * dt;
-      stars.parallax.x = drift.x;
-      stars.parallax.y = drift.y;
-      stars.render(ms / 1000);
-    };
-    frame = requestAnimationFrame(tick);
+      spring.step(
+        still ? rest : pointer.centred,
+        glideSeconds(now.momentum),
+        dt,
+      );
+      stars.parallax = spring.position;
+      stars.pointer = pointer.px;
+      stars.render(ms / 1000, dt);
+    });
 
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
-      window.removeEventListener("pointermove", onMove);
-      document.documentElement.removeEventListener("pointerleave", onLeave);
+      stopPointer();
       stars.dispose();
     };
   }, []);

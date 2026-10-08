@@ -39,5 +39,5 @@
     ".next/types/**/*.ts",
     "src/components/loginHeader"
   ],
-  "exclude": ["node_modules", "public/home/prototype-assets"]
+  "exclude": ["node_modules"]
 }
