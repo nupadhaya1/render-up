@@ -59,7 +59,6 @@ import { cn } from "~/lib/utils";
 
 import type { CameraInfo } from "../_lib/engine";
 import { ACCEPT, type LoadedModel, loadModel } from "../_lib/model-loader";
-import { sendToUs } from "../_lib/send";
 import {
   aspectRatio,
   ASSETS,
@@ -173,25 +172,6 @@ export function Studio() {
         setConfig((c) => ({ ...c, upAxis: loaded.nativeUp }));
         setModel(loaded);
         setView("hero");
-        // the preview is ready; a file from a tester is also sent to us (the test build's upload)
-        if (source instanceof File) {
-          setLoading({ stage: "uploading", percent: 62, name });
-          try {
-            await sendToUs(source, (percent) =>
-              setLoading({
-                stage: "uploading",
-                percent: 62 + Math.round(percent * 0.38),
-                name,
-              }),
-            );
-          } catch (e) {
-            setError(
-              `Your preview is ready, but the file could not be sent to us: ${
-                e instanceof Error ? e.message : "upload failed"
-              }`,
-            );
-          }
-        }
         setLoading(null);
       } catch (e) {
         setLoading(null);

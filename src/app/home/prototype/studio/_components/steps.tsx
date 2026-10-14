@@ -74,7 +74,7 @@ export type Setter = <K extends keyof StudioConfig>(
 ) => void;
 
 export type Loading = {
-  stage: "reading" | "converting" | "compressing" | "uploading";
+  stage: "reading" | "converting";
   percent: number;
   name: string;
 };
@@ -112,8 +112,6 @@ export function UploadStep({
     const stages: { id: Loading["stage"]; label: string }[] = [
       { id: "reading", label: "Reading the file" },
       { id: "converting", label: "Converting CAD surfaces to a preview" },
-      { id: "compressing", label: "Compressing" },
-      { id: "uploading", label: "Uploading to your cart" },
     ];
     const at = loading ? stages.findIndex((s) => s.id === loading.stage) : -1;
     return (
@@ -202,8 +200,8 @@ export function UploadStep({
             <hr className="rs-hairline" />
             <div className="rs-notice">
               <span>
-                Test build: the file you add is also sent to us, so we can check
-                that real CAD loads. Rendering is not live yet.
+                Test build: your file opens in this browser and is not sent
+                anywhere. Rendering is not live yet.
               </span>
             </div>
           </>
