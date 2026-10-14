@@ -9,7 +9,6 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 
-import { buildMockBot } from "./mock-bot";
 import { ASSETS } from "./options";
 
 export type Category =
@@ -219,23 +218,15 @@ function readStep(
   });
 }
 
-/** A file the tester chose, a file at a URL, or the built-in mock bot. */
-export type ModelSource =
-  | File
-  | { url: string; name: string }
-  | { mock: true; name: string };
-
 export async function loadModel(
-  source: ModelSource,
+  source: File | { url: string; name: string },
   onStage?: (stage: string) => void,
 ): Promise<LoadedModel> {
-  const name = source.name;
+  const name = source instanceof File ? source.name : source.name;
   const ext = name.split(".").pop()?.toLowerCase() ?? "";
   onStage?.("reading");
-  let buffer = new ArrayBuffer(0);
-  if ("mock" in source) {
-    // nothing to read: the mock bot is built in code
-  } else if (source instanceof File) {
+  let buffer: ArrayBuffer;
+  if (source instanceof File) {
     buffer = await source.arrayBuffer();
   } else {
     const response = await fetch(source.url);
@@ -250,11 +241,7 @@ export async function loadModel(
   let object: THREE.Object3D;
   let unitMm = 1;
   let nativeUp: "y" | "z" = "z";
-  if ("mock" in source) {
-    object = buildMockBot();
-    unitMm = 1000;
-    nativeUp = "y";
-  } else if (ext === "glb" || ext === "gltf") {
+  if (ext === "glb" || ext === "gltf") {
     const result = await gltf().parseAsync(buffer, "");
     object = result.scene;
     unitMm = 1000;
