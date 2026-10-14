@@ -1,0 +1,617 @@
+/* PROTOTYPE: Render-Up studio mock, full neumorphism.
+   One surface colour for everything. Shapes are pushed out of it (raised) or pressed into it (inset)
+   with a light shadow from the top-left and a dark shadow to the bottom-right. No borders.
+   Colours come from the /home theme: #e6e6e6 panels, sky blue (primary-500) for anything active,
+   royal blue (secondary) for the one committing action. No orange. */
+
+/* shadcn tokens for this route only (the rest of the app keeps its own theme).
+   html:has() so Radix portals (dialogs, sheets, selects, tooltips) pick them up too. */
+html:has(.rs-root) {
+  --nm-bg: var(--color-background-900, #e6e6e6);
+  --nm-light: #ffffff;
+  --nm-dark: #bdbdbd;
+  --nm-dark-soft: #cbcbcb;
+
+  --nm-raise: 9px 9px 18px var(--nm-dark), -9px -9px 18px var(--nm-light);
+  --nm-raise-sm: 5px 5px 10px var(--nm-dark), -5px -5px 10px var(--nm-light);
+  --nm-raise-xs: 3px 3px 6px var(--nm-dark), -3px -3px 6px var(--nm-light);
+  --nm-inset:
+    inset 5px 5px 10px var(--nm-dark), inset -5px -5px 10px var(--nm-light);
+  --nm-inset-sm:
+    inset 3px 3px 6px var(--nm-dark), inset -3px -3px 6px var(--nm-light);
+  --nm-inset-xs:
+    inset 2px 2px 4px var(--nm-dark), inset -2px -2px 4px var(--nm-light);
+
+  --rs-accent: var(--color-primary-500, #03a9fc);
+  --rs-accent-deep: var(--color-primary-400, #0287ca);
+  --rs-commit: var(--color-secondary-500, #2b50d4);
+  --rs-commit-deep: var(--color-secondary-400, #2340a9);
+  --rs-ink: #262626;
+  --rs-ink-2: #404040;
+  --rs-ink-3: #636363;
+  --rs-ink-4: #8f8f8f;
+  --rs-glass: #0b0c0f;
+  --rs-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --radius: 1rem;
+  --background: var(--nm-bg);
+  --foreground: var(--rs-ink);
+  --card: var(--nm-bg);
+  --card-foreground: var(--rs-ink);
+  --popover: var(--nm-bg);
+  --popover-foreground: var(--rs-ink);
+  --primary: var(--rs-commit);
+  --primary-foreground: #ffffff;
+  --secondary: var(--nm-bg);
+  --secondary-foreground: var(--rs-ink);
+  --muted: var(--nm-bg);
+  --muted-foreground: var(--rs-ink-3);
+  --accent: #dbdbdb;
+  --accent-foreground: var(--rs-ink);
+  --destructive: #c62828;
+  --border: transparent;
+  --input: transparent;
+  --ring: var(--rs-accent);
+}
+
+html:has(.rs-root) body {
+  background: var(--nm-bg);
+  color: var(--rs-ink);
+  overflow: hidden;
+}
+
+.rs-root {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  color: var(--rs-ink);
+  background: var(--nm-bg);
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+.rs-root *:focus-visible,
+.rs-float *:focus-visible {
+  outline: 2px solid var(--rs-accent);
+  outline-offset: 3px;
+}
+
+.rs-brand {
+  font-family: var(--font-notable), ui-sans-serif, system-ui, sans-serif;
+  color: var(--rs-accent);
+  letter-spacing: 0.06em;
+  text-shadow:
+    1px 1px 1px rgba(0, 0, 0, 0.12),
+    -1px -1px 1px #fff;
+}
+
+/* ------------------------------------------------------------ surfaces */
+.rs-panel {
+  position: relative;
+  background: var(--nm-bg);
+  border-radius: 30px;
+  box-shadow: var(--nm-raise);
+}
+
+.rs-well {
+  background: var(--nm-bg);
+  border-radius: 20px;
+  box-shadow: var(--nm-inset);
+}
+
+/* a groove pressed into the surface */
+.rs-hairline {
+  height: 4px;
+  margin: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--nm-bg);
+  box-shadow:
+    inset 1.5px 1.5px 2px var(--nm-dark),
+    inset -1.5px -1.5px 2px var(--nm-light);
+}
+
+.rs-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rs-ink-3);
+}
+
+/* things that float above the page (dialog, sheet, popover, select list) */
+.rs-float {
+  background: var(--nm-bg);
+  border: 0;
+  border-radius: 26px;
+  color: var(--rs-ink);
+  box-shadow:
+    14px 14px 34px rgba(0, 0, 0, 0.28),
+    -8px -8px 22px rgba(255, 255, 255, 0.55);
+}
+
+/* the scrim behind dialogs and sheets: the same surface, frosted, instead of black */
+html:has(.rs-root) .fixed.inset-0.z-50.bg-black\/80 {
+  background: rgba(205, 205, 205, 0.66);
+  backdrop-filter: blur(7px);
+}
+
+/* ------------------------------------------------------------ buttons */
+.rs-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--nm-bg);
+  color: var(--rs-ink-2);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--nm-raise-sm);
+  transition:
+    box-shadow 140ms ease,
+    color 140ms ease;
+}
+.rs-btn:hover {
+  background: var(--nm-bg);
+  color: var(--rs-accent-deep);
+  box-shadow:
+    6px 6px 12px var(--nm-dark),
+    -6px -6px 12px var(--nm-light);
+}
+.rs-btn:active,
+.rs-btn[data-state="on"],
+.rs-btn[data-state="open"],
+.rs-btn[aria-pressed="true"] {
+  color: var(--rs-accent-deep);
+  box-shadow: var(--nm-inset-sm);
+}
+.rs-btn:disabled {
+  opacity: 0.45;
+}
+.rs-btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  box-shadow: var(--nm-raise-xs);
+}
+.rs-btn-sm:hover {
+  box-shadow:
+    4px 4px 8px var(--nm-dark),
+    -4px -4px 8px var(--nm-light);
+}
+.rs-btn-sm:active,
+.rs-btn-sm[aria-pressed="true"] {
+  box-shadow: var(--nm-inset-xs);
+}
+.rs-btn-icon {
+  width: 38px;
+  padding: 0;
+}
+.rs-btn-icon.rs-btn-sm {
+  width: 32px;
+}
+
+/* the one committing action: royal blue pushed out of the surface */
+.rs-btn-primary {
+  height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #3a61e6, var(--rs-commit-deep));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow:
+    6px 6px 14px rgba(35, 64, 169, 0.42),
+    -6px -6px 14px var(--nm-light);
+  transition:
+    box-shadow 140ms ease,
+    filter 140ms ease;
+}
+.rs-btn-primary:hover {
+  background: linear-gradient(145deg, #3a61e6, var(--rs-commit-deep));
+  color: #fff;
+  filter: brightness(1.07);
+}
+.rs-btn-primary:active {
+  background: linear-gradient(145deg, var(--rs-commit-deep), #3359dc);
+  box-shadow:
+    inset 4px 4px 9px rgba(12, 26, 84, 0.6),
+    inset -3px -3px 8px rgba(110, 145, 255, 0.5);
+}
+.rs-btn-primary:disabled {
+  background: var(--nm-bg);
+  color: var(--rs-ink-4);
+  box-shadow: var(--nm-raise-sm);
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------ segmented control */
+.rs-seg {
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 18px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset-sm);
+}
+.rs-seg-item {
+  height: 30px;
+  min-width: 0;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: var(--rs-ink-3);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    box-shadow 140ms ease,
+    color 140ms ease;
+}
+.rs-seg-item:hover {
+  background: transparent;
+  color: var(--rs-ink);
+}
+.rs-seg-item[data-state="on"] {
+  background: var(--nm-bg);
+  color: var(--rs-accent-deep);
+  box-shadow: var(--nm-raise-xs);
+}
+
+/* ------------------------------------------------------------ switch */
+.rs-switch {
+  width: 52px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset-sm);
+  transition: background 180ms ease;
+}
+.rs-switch[data-state="checked"] {
+  background: var(--rs-accent);
+  box-shadow:
+    inset 3px 3px 6px rgba(1, 88, 132, 0.55),
+    inset -3px -3px 6px rgba(140, 220, 255, 0.7);
+}
+.rs-switch > span {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #ffffff, #d6d6d6);
+  box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.3),
+    -1px -1px 3px rgba(255, 255, 255, 0.9);
+  translate: 4px 0;
+}
+.rs-switch[data-state="checked"] > span {
+  translate: 28px 0;
+}
+
+/* ------------------------------------------------------------ slider */
+.rs-slider {
+  height: 26px;
+}
+.rs-slider > span:first-child {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset-xs);
+}
+.rs-slider > span:first-child > span {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rs-accent-deep), var(--rs-accent));
+  box-shadow: inset 1px 1px 2px rgba(1, 88, 132, 0.5);
+}
+.rs-slider [role="slider"] {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: linear-gradient(145deg, #ffffff, #d2d2d2);
+  box-shadow:
+    3px 3px 7px rgba(0, 0, 0, 0.3),
+    -3px -3px 7px var(--nm-light);
+}
+
+/* ------------------------------------------------------------ lamps + readouts */
+.rs-led {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--nm-bg);
+  box-shadow:
+    inset 1.5px 1.5px 3px var(--nm-dark),
+    inset -1.5px -1.5px 3px var(--nm-light);
+}
+.rs-led[data-on="accent"] {
+  background: var(--rs-accent);
+  box-shadow:
+    inset 1px 1px 2px rgba(255, 255, 255, 0.7),
+    0 0 9px 1px rgba(3, 169, 252, 0.75);
+}
+.rs-led[data-on="ok"] {
+  background: var(--rs-commit);
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.55);
+}
+
+/* a value pressed into the surface */
+.rs-lcd {
+  font-family: var(--rs-mono);
+  font-size: 11.5px;
+  letter-spacing: 0;
+  color: var(--rs-ink-2);
+  background: var(--nm-bg);
+  border-radius: 12px;
+  box-shadow: var(--nm-inset-xs);
+}
+.rs-lcd b {
+  font-weight: 600;
+  color: var(--rs-ink-4);
+}
+.rs-lcd em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--rs-commit-deep);
+}
+
+.rs-mono {
+  font-family: var(--rs-mono);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.rs-notice {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--rs-ink-2);
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset-sm);
+}
+.rs-notice > svg {
+  margin-top: 2px;
+  flex: none;
+  color: var(--rs-accent-deep);
+}
+.rs-notice[data-tone="error"] {
+  color: #8c1d13;
+}
+.rs-notice[data-tone="error"] > svg {
+  color: #c62828;
+}
+
+/* ------------------------------------------------------------ viewport */
+.rs-bezel {
+  padding: 14px;
+  border-radius: 32px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-raise);
+}
+/* the screen is a window pressed into the bezel */
+.rs-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset);
+}
+.rs-screen::after {
+  /* the lip of the well, drawn over the 3D picture */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 6px 6px 14px rgba(0, 0, 0, 0.42),
+    inset -5px -5px 12px rgba(255, 255, 255, 0.34);
+}
+.rs-checker {
+  background-color: #dcdcdc;
+  background-image:
+    linear-gradient(45deg, #c6c6c6 25%, transparent 25%),
+    linear-gradient(-45deg, #c6c6c6 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #c6c6c6 75%),
+    linear-gradient(-45deg, transparent 75%, #c6c6c6 75%);
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0;
+}
+.rs-frame {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 6px;
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.85),
+    0 0 0 9999px rgba(8, 9, 12, 0.5);
+}
+.rs-frame-tick {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid var(--rs-accent);
+  border-radius: 3px;
+}
+/* small label sitting on a picture */
+.rs-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--rs-ink-2);
+  background: rgba(230, 230, 230, 0.94);
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.4),
+    -1px -1px 3px rgba(255, 255, 255, 0.35);
+}
+
+/* ------------------------------------------------------------ knob */
+/* a dish pressed into the surface with a dome sitting in it; only the pointer turns,
+   so the light keeps coming from the top-left */
+.rs-knob {
+  position: relative;
+  flex: none;
+  border-radius: 999px;
+  touch-action: none;
+  cursor: ns-resize;
+  user-select: none;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset-sm);
+}
+.rs-knob-cap {
+  position: absolute;
+  inset: 17%;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #f7f7f7, #cfcfcf);
+  box-shadow:
+    4px 4px 9px rgba(0, 0, 0, 0.3),
+    -3px -3px 7px var(--nm-light);
+}
+.rs-knob-cap::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #d6d6d6, #f4f4f4);
+}
+.rs-knob-hand {
+  position: absolute;
+  inset: 17%;
+  border-radius: 999px;
+  pointer-events: none;
+}
+.rs-knob-mark {
+  position: absolute;
+  left: 50%;
+  top: 7%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 999px;
+  background: var(--rs-accent);
+  box-shadow:
+    inset 1px 1px 1px rgba(255, 255, 255, 0.7),
+    0 0 6px rgba(3, 169, 252, 0.8);
+}
+
+/* ------------------------------------------------------------ option cards */
+.rs-card {
+  position: relative;
+  border: 0;
+  border-radius: 20px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-raise-sm);
+  transition: box-shadow 160ms ease;
+}
+button.rs-card:hover {
+  box-shadow:
+    7px 7px 14px var(--nm-dark),
+    -7px -7px 14px var(--nm-light);
+}
+button.rs-card:active,
+.rs-card[data-selected="true"] {
+  box-shadow: var(--nm-inset-sm);
+}
+.rs-card[data-selected="true"] .rs-card-title {
+  color: var(--rs-accent-deep);
+}
+/* pictures inside cards are little wells of their own */
+.rs-thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--rs-glass);
+}
+.rs-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 3px 3px 7px rgba(0, 0, 0, 0.45),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+}
+
+.rs-swatch {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 3px solid var(--nm-bg);
+  border-radius: 999px;
+  box-shadow: var(--nm-raise-xs);
+  transition: box-shadow 140ms ease;
+}
+.rs-swatch:hover {
+  box-shadow:
+    4px 4px 8px var(--nm-dark),
+    -4px -4px 8px var(--nm-light);
+}
+.rs-swatch[data-selected="true"] {
+  box-shadow:
+    0 0 0 2.5px var(--rs-accent),
+    var(--nm-raise-xs);
+}
+
+.rs-drop {
+  border: 0;
+  border-radius: 24px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset);
+  transition: box-shadow 160ms ease;
+}
+.rs-drop:hover .rs-drop-icon,
+.rs-drop[data-over="true"] .rs-drop-icon {
+  color: var(--rs-accent-deep);
+}
+/* an icon on a small raised pad */
+.rs-pad {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 16px;
+  background: var(--nm-bg);
+  color: var(--rs-ink-2);
+  box-shadow: var(--nm-raise-xs);
+}
+
+.rs-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #b5b5b5 transparent;
+}
+
+.rs-progress {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--nm-bg);
+  box-shadow: var(--nm-inset-xs);
+}
+.rs-progress > div {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rs-accent-deep), var(--rs-accent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rs-root * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
