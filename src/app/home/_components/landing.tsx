@@ -7,6 +7,7 @@
 
 import { AdminPanel } from "./admin-panel";
 import { Hero } from "./hero";
+import { StudioLink } from "./studio-link";
 import { useHeroSettings } from "./use-hero-settings";
 
 export function Landing() {
@@ -18,6 +19,7 @@ export function Landing() {
       <header className="lp-nav-wrap">
         <div className="lp-nav lp-glass">
           <span className="lp-brand">RENDER UP</span>
+          <StudioLink />
         </div>
       </header>
 

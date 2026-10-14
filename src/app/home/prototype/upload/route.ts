@@ -1,12 +1,9 @@
-// Where a studio tester's CAD file goes: a private Vercel Blob store (BLOB_READ_WRITE_TOKEN, added by creating the store
+// Where a studio tester's CAD file goes: a private Vercel Blob store (BLOB_READ_WRITE_TOKEN, added by connecting the store
 // in Vercel). The browser uploads straight to the store, because a function request body is capped at 4.5 MB and CAD files
-// are bigger; this route only decides who may. The gate cookie is checked here (the completion callback comes from
-// Vercel's servers without one, and carries a signature that handleUpload verifies instead).
+// are bigger; this route only issues the upload permission. Uploads are refused on production: the studio is a test build.
 
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { type NextRequest, NextResponse } from "next/server";
-
-import { GATE_COOKIE, matchesKey } from "../_lib/gate";
 
 const UPLOAD_PREFIX = "studio-tests/";
 const MAX_BYTES = 512 * 1024 * 1024;
@@ -18,8 +15,8 @@ export async function POST(request: NextRequest) {
       request,
       body,
       onBeforeGenerateToken: async (pathname) => {
-        if (!matchesKey(request.cookies.get(GATE_COOKIE)?.value)) {
-          throw new Error("Open the test link again to upload.");
+        if (process.env.VERCEL_ENV === "production") {
+          throw new Error("Uploads are only open on test deployments.");
         }
         if (!pathname.startsWith(UPLOAD_PREFIX)) {
           throw new Error("Unexpected upload path.");
