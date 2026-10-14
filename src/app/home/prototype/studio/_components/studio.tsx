@@ -58,7 +58,13 @@ import {
 import { cn } from "~/lib/utils";
 
 import type { CameraInfo } from "../_lib/engine";
-import { ACCEPT, type LoadedModel, loadModel } from "../_lib/model-loader";
+import { MOCK_BOT_NAME } from "../_lib/mock-bot";
+import {
+  ACCEPT,
+  type LoadedModel,
+  loadModel,
+  type ModelSource,
+} from "../_lib/model-loader";
 import {
   aspectRatio,
   ASSETS,
@@ -151,37 +157,31 @@ export function Studio() {
   }, []);
 
   // ------------------------------------------------------------ upload
-  const ingest = useCallback(
-    async (source: File | { url: string; name: string }) => {
-      setError(null);
-      setModel(null);
-      setShots([]);
-      setStep("upload");
-      setYaw(0);
-      const name = source.name;
-      setLoading({ stage: "reading", percent: 8, name });
-      try {
-        const loaded = await loadModel(source, (stage) =>
-          setLoading({
-            stage: stage === "reading" ? "reading" : "converting",
-            percent:
-              stage === "reading" ? 12 : stage === "converting" ? 28 : 46,
-            name,
-          }),
-        );
-        setConfig((c) => ({ ...c, upAxis: loaded.nativeUp }));
-        setModel(loaded);
-        setView("hero");
-        setLoading(null);
-      } catch (e) {
-        setLoading(null);
-        setError(
-          e instanceof Error ? e.message : "This file could not be read.",
-        );
-      }
-    },
-    [],
-  );
+  const ingest = useCallback(async (source: ModelSource) => {
+    setError(null);
+    setModel(null);
+    setShots([]);
+    setStep("upload");
+    setYaw(0);
+    const name = source.name;
+    setLoading({ stage: "reading", percent: 8, name });
+    try {
+      const loaded = await loadModel(source, (stage) =>
+        setLoading({
+          stage: stage === "reading" ? "reading" : "converting",
+          percent: stage === "reading" ? 12 : stage === "converting" ? 28 : 46,
+          name,
+        }),
+      );
+      setConfig((c) => ({ ...c, upAxis: loaded.nativeUp }));
+      setModel(loaded);
+      setView("hero");
+      setLoading(null);
+    } catch (e) {
+      setLoading(null);
+      setError(e instanceof Error ? e.message : "This file could not be read.");
+    }
+  }, []);
 
   useEffect(() => {
     const over = (e: DragEvent) => {
@@ -586,6 +586,15 @@ export function Studio() {
                         <div className="mt-7 flex justify-center gap-4">
                           <Button className="rs-btn-primary" onClick={pickFile}>
                             Choose a file
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="rs-btn h-11 rounded-2xl px-5 text-[14px]"
+                            onClick={() =>
+                              void ingest({ mock: true, name: MOCK_BOT_NAME })
+                            }
+                          >
+                            Load mock bot
                           </Button>
                         </div>
                         <p className="rs-mono mt-6 text-[11px] tracking-wide text-[var(--rs-ink-4)]">
