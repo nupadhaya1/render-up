@@ -5,7 +5,7 @@
 export const GATE_PARAM = "testpswd";
 export const GATE_COOKIE = "rp_studio_test";
 export const GATE_PREFIX = "/home/prototype";
-/** The upload route checks the cookie itself, because UploadThing's servers call it back without one. */
+/** The upload route checks the cookie itself, because Vercel Blob's servers call it back without one. */
 export const GATE_EXEMPT = "/home/prototype/upload";
 
 /** Compares without bailing at the first mismatch, so response time does not leak how much of a guess was right. */
