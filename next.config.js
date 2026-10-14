@@ -15,6 +15,15 @@ const config = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.ufs.sh", // allow any subdomain like t7w2berwuw.ufs.sh
+        pathname: "/f/**", // optional: restrict to /f/... paths
+      },
+    ],
+  },
 };
 
 export default config;
